@@ -1,0 +1,13 @@
+
+Osquid:S1172
+"1Remove this unused method parameter "pathString".(È´ƒé8òÂ´’Â-
+Psquid:S1135."2Complete the task associated to this TODO comment.(ÑûÊ¶8§ğ¤’Â-
+‚squid:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(ì­ŠÜúÿÿÿÿ8ë»È’Â-
+Ssquid:S1191"5Use classes from the Java API instead of Sun classes.(ÊüÿÃ8ë»È’Â-
+‚squid:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(ì­ŠÜúÿÿÿÿ8§ğ¤’Â-
+Psquid:S1135"2Complete the task associated to this TODO comment.(ºĞ¸8òÂ´’Â-
+Usquid:S11353"2Complete the task associated to this TODO comment.(ØÍ˜¬ûÿÿÿÿ8ñ×§’Â-
+¡%squid:RedundantThrowsDeclarationCheck"iRemove the declaration of thrown exception 'java.lang.NullPointerException' which is a runtime exception.(ø¾ª8§ğ¤’Â-
+Psquid:S11351"2Complete the task associated to this TODO comment.(İ•¥Š8¡±¦’Â-
+~squid:S39230"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ÿÃ–÷şÿÿÿÿ8İ‘§’Â-
+Usquid:S1135"2Complete the task associated to this TODO comment.(¼ôÙ½ÿÿÿÿÿ8§ğ¤’Â-
