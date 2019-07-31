@@ -24,57 +24,104 @@ public class Parser {
             return false;
         }
     }
-    private StringBuffer parseLine(String line) throws NullPointerException{
-        if(isParent(line)){
-            PARENT_STACK.pu
-        }
-            StringBuffer stringBuffer = new StringBuffer();
-            String[] lineParts = line.split(":");
-            if(lineParts.length>1){
-                //TODO parse as Block Expansion it means a: img equals to <a> <img /> </a>
-                stringBuffer.append("<");
-                stringBuffer.append(lineParts[0]);
-                stringBuffer.append(">");
-                parseSelfClosingTags(stringBuffer,line);
-                stringBuffer.append("<");
-                stringBuffer.append(lineParts[0]);
-                stringBuffer.append("/> \n");
-            }else{
-             lineParts = line.split("/");
-                 if(lineParts.length>1){
-                //TODO self closing tag foo/ or foo(bar='baz')/ equals to <foo/> or <foo bar="baz" />
-                     stringBuffer.append("<");
-                     stringBuffer.append(lineParts[1]);
-                     stringBuffer.append("/> \n");
-                 }else{
-                    parseSelfClosingTags(stringBuffer,line);
-                 }
+    private StringBuffer parseLine(String line){
+        StringBuffer html = new StringBuffer();
+        StringBuffer tag = new StringBuffer();
+        String pureTag = "";
+        if(line.equals("doctype html"))
+           return new StringBuffer("<!DOCTYPE html>");
+
+        char[] lineChars = line.toCharArray();
+        boolean isTagStarted = false;
+        boolean isTagEnded = false;
+        boolean isOpenBracket = false;
+        for (char lineChar : lineChars) {
+            if(lineChar=='(')
+                isOpenBracket = true;
+
+            if(lineChar==')')
+                isOpenBracket = false;
+
+            if(Character.isWhitespace(lineChar) && isTagStarted && !isOpenBracket){
+                // if white space meets after started getting tag's chars
+                    isTagStarted = false;
+                    isTagEnded = true;
+            } else if (!Character.isWhitespace(lineChar) && !isTagEnded) {
+               // we are getting tag's chars
+                    tag.append(lineChar);
+                isTagStarted = true;
             }
-        return stringBuffer;
+        }
+        //if has class set className
+        StringBuffer classNames = new StringBuffer();
+        String[] temp = tag.toString().split("\\.");
+        if(temp.length>1) {
+            if(pureTag.equals(""))
+                pureTag = temp[0];
+            for (int i = 1; i < temp.length; i++) {
+                classNames.append("class=\"");
+                classNames.append(temp[i].split("\\(")[0]);
+                classNames.append('"');
+                classNames.append(' ');
+            }
+        }
+
+        //if has id filed
+        StringBuffer idFiled = new StringBuffer();
+        temp = tag.toString().split("#");
+        if(temp.length>1) {
+            if(pureTag.equals(""))
+                pureTag = temp[0];
+            idFiled.append(temp[1]);
+        }
+
+        //if has property
+        StringBuffer property = new StringBuffer();
+        temp = tag.toString().split("\\(");
+        if(temp.length>1) {
+
+            if(pureTag.equals(""))
+                pureTag = temp[0];
+
+            char[] propertyChars = temp[1].toCharArray();
+            boolean isValue = false;
+            boolean isProperty = true;
+
+            for (char propertyChar : propertyChars) {
+                if(propertyChar=='\'') {
+                    propertyChar = '^';
+                    property.append('"');
+                    property.append(' ');
+                }
+               if(propertyChar=='=') {
+                   isProperty = false;
+                   isValue = true;
+                   property.append('=');
+               } else if(propertyChar==' '){
+                   isProperty = true;
+                   isValue = false;
+               }else if(propertyChar==')'){
+                   break;
+               }
+
+               if(isProperty && propertyChar != '^')
+                   property.append(propertyChar);
+               if(isValue && propertyChar!='=' && propertyChar != '^'){
+                   property.append(propertyChar);
+               }
+
+            }
+        }
+        //TODO get data after tag and check attributes
+    if(pureTag.equals("")){
+        html.append("<").append(tag).append(">").append(data).append("</").append(tag).append(">");
+    }else if(!SelfClosingTags.isSelfClosingTag(tag.toString())){
+        html.append("<").append(pureTag).append(" ").append(classNames).append(" ").append(idFiled).append(" ").append(property).append(" >");
+    }else{
+        html.append("<").append(pureTag).append("/>");
+    }
+        return html;
     }
 
-    private boolean isParent(String line){
-        char[] chars = line.toCharArray();
-        int counter = 0;
-        for (char c:chars
-             ) {
-            if(c==' ')
-                counter++;
-        }
-        return counter < 2;
-    }
-    private void parseSelfClosingTags(StringBuffer stringBuffer, String line){
-        if(SelfClosingTags.isSelfClosingTag(line)){
-            stringBuffer.append("<");
-            stringBuffer.append(line);
-            stringBuffer.append("/> \n");
-        }else{
-            stringBuffer.append("<");
-            stringBuffer.append(line);
-            stringBuffer.append(">");
-            stringBuffer.append("<");
-            stringBuffer.append(line);
-            stringBuffer.append("/> \n");
-        }
-    }
+
 }
